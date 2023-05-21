@@ -1,0 +1,6 @@
+[submodule "libraries/CMSIS-NN"]
+	path = libraries/CMSIS-NN
+	url = git@github.com:ARM-software/CMSIS-NN.git
+[submodule "libraries/tflite-micro"]
+	path = libraries/tflite-micro
+	url = git@github.com:tensorflow/tflite-micro.git
