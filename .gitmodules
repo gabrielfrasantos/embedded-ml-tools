@@ -4,3 +4,15 @@
 [submodule "libraries/tflite-micro"]
 	path = libraries/tflite-micro
 	url = git@github.com:tensorflow/tflite-micro.git
+[submodule "libraries/flatbuffers"]
+	path = libraries/flatbuffers
+	url = git@github.com:google/flatbuffers.git
+[submodule "libraries/kissfft"]
+	path = libraries/kissfft
+	url = git@github.com:mborgerding/kissfft.git
+[submodule "libraries/gemmlowp"]
+	path = libraries/gemmlowp
+	url = git@github.com:google/gemmlowp.git
+[submodule "libraries/ruy"]
+	path = libraries/ruy
+	url = git@github.com:google/ruy.git
