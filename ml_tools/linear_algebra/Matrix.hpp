@@ -3,6 +3,7 @@
 
 #include <array>
 #include <cstdint>
+#include "infra/util/WithStorage.hpp"
 
 namespace ml_tools
 {
@@ -27,7 +28,7 @@ namespace ml_tools
     {
     public:
         template<std::size_t Rows, std::size_t Columns>
-        using WithRowsAndColumns = infra::WithStorage<Matrix, MatrixStorage<T, Rows, Columns>>;
+        using WithRowsAndColumns = infra::WithStorage<Matrix<T>, MatrixStorage<T, Rows, Columns>>;
 
         Matrix();
 
