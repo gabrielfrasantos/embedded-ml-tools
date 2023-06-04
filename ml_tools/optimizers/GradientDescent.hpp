@@ -2,7 +2,7 @@
 #define MLTOOLS_OPTIMIZERS_GRADIENT_DESCENT_HPP
 
 #include "infra/util/Function.hpp"
-#include "Matrix.hpp"
+#include "linear_algebra/Matrix.hpp"
 #include <cmath>
 
 namespace ml_tools

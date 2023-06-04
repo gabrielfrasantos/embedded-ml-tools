@@ -12,4 +12,16 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(emil)
 
+add_subdirectory(ml_tools)
+
+add_executable(ml-tools Main.cpp)
+
+target_link_libraries(ml-tools PUBLIC
+    infra.event
+    ml_tools.activations
+    ml_tools.linear_algebra
+    ml_tools.normalization
+    ml_tools.optimizers
+)
+
 
