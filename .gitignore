@@ -1,0 +1,17 @@
+# Project outcomes
+output/
+binaries/
+build/
+
+# Eclipse files
+.settings/
+.project
+.cproject
+
+# IAR garbage
+*.dep
+*.stackdump
+*.exe
+
+# Sonarqube
+.scannerwork
