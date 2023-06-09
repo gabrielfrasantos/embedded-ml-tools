@@ -1,5 +1,5 @@
 add_executable(ml_tools.linear_algebra_test)
-emil_build_for(ml_tools.linear_algebra_test BOOL EMIL_BUILD_TESTS)
+emil_build_for(ml_tools.linear_algebra_test)
 emil_add_test(ml_tools.linear_algebra_test)
 
 target_link_libraries(ml_tools.linear_algebra_test PUBLIC

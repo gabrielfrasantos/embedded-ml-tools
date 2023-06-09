@@ -181,5 +181,24 @@
       "configuration": "RelWithDebInfo",
       "configurePreset": "stm32f767"
     }
+  ],
+  "testPresets": [
+    {
+      "name": "defaults",
+      "hidden": true,
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": true
+      }
+    },
+    {
+      "name": "ContinuousIntegration",
+      "configurePreset": "ContinuousIntegration",
+      "configuration": "Debug",
+      "inherits": "defaults"
+    }
   ]
 }
