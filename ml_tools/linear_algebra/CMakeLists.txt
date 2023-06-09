@@ -17,3 +17,5 @@ target_sources(ml_tools.linear_algebra PRIVATE
     StandardDeviation.hpp
     StandardDeviation.cpp
 )
+
+add_subdirectory(test)

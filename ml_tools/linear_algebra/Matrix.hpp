@@ -3,6 +3,7 @@
 
 #include <array>
 #include <cstdint>
+#include "infra/util/BoundedVector.hpp"
 #include "infra/util/WithStorage.hpp"
 
 namespace ml_tools
@@ -30,7 +31,11 @@ namespace ml_tools
         template<std::size_t Rows, std::size_t Columns>
         using WithRowsAndColumns = infra::WithStorage<Matrix<T>, MatrixStorage<T, Rows, Columns>>;
 
-        Matrix();
+        explicit Matrix();
+        Matrix(const infra::BoundedVector<T>& initialization);
+
+        Matrix(const Matrix&);
+        Matrix& operator=(const Matrix&);
 
         bool operator==(const Matrix<T>&);
         bool operator!=(const Matrix<T>&);
@@ -68,6 +73,18 @@ namespace ml_tools
 
     template<typename T>
     Matrix<T>::Matrix()
+    {}
+
+    template<typename T>
+    Matrix<T>::Matrix(const infra::BoundedVector<T>& initialization)
+    {}
+
+    template<typename T>
+    Matrix<T>::Matrix(const Matrix<T>&)
+    {}
+
+    template<typename T>
+    Matrix<T>& Matrix<T>::operator=(const Matrix<T>& input)
     {}
 
     template<typename T>
