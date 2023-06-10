@@ -10,15 +10,15 @@ namespace ml_tools
     template<typename T, std::size_t NumberOfFeatures>
     struct ModelParameters
     {
-        Matrix<T>::WithRowsAndColumns<NumberOfFeatures, 1> w;
-        Matrix<T>::WithRowsAndColumns<1, 1> b;
+        Matrix<T, NumberOfFeatures, 1> w;
+        Matrix<T, 1, 1> b;
     };
 
-    template<typename T>
+    template<typename T, std::size_t NumberOfFeatures>
     struct ModelParametersRef
     {
-        Matrix<T>& w;
-        Matrix<T>& b;
+        Matrix<T, NumberOfFeatures, 1>& w;
+        Matrix<T, 1, 1>& b;
     };
 
     template<typename T, class GradientFunction, class CostFunction, std::size_t NumberOfFeatures>
@@ -26,11 +26,11 @@ namespace ml_tools
     {
     public:
         using EpochCallback = infra::Function<void(std::size_t epoch, T loss)>;
-        using OnDoneCallback = infra::Function<void(ModelParametersRef<T>)>;
+        using OnDoneCallback = infra::Function<void(ModelParametersRef<T, NumberOfFeatures>)>;
 
         explicit GradientDescent(const GradientFunction& gradientFunction, const CostFunction& costFunction, std::size_t iterations, std::size_t epoch, T learningRate, T regularization = 0);
 
-        void minimize(const Matrix<T>& wInitial, const Matrix<T>& bInitial, const EpochCallback& onEpochCompleted, const OnDoneCallback& onDone);
+        void minimize(const Matrix<T, NumberOfFeatures, 1>& wInitial, const Matrix<T, 1, 1>& bInitial, const EpochCallback& onEpochCompleted, const OnDoneCallback& onDone);
 
     private:
         GradientFunction& gradientFunction;
@@ -56,7 +56,7 @@ namespace ml_tools
     {}
 
     template<typename T, class GradientFunction, class CostFunction, std::size_t NumberOfFeatures>
-    void GradientDescent<T, GradientFunction, CostFunction, NumberOfFeatures>::minimize(const Matrix<T>& wInitial, const Matrix<T>& bInitial, const EpochCallback& onEpochCompleted, const OnDoneCallback& onDone)
+    void GradientDescent<T, GradientFunction, CostFunction, NumberOfFeatures>::minimize(const Matrix<T, NumberOfFeatures, 1>& wInitial, const Matrix<T, 1, 1>& bInitial, const EpochCallback& onEpochCompleted, const OnDoneCallback& onDone)
     {
         really_assert(wInitial.Size() != w.Size() || bInitial.Size() != b.Size());
 
