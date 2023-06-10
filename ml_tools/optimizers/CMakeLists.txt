@@ -14,3 +14,5 @@ target_sources(ml_tools.optimizers PRIVATE
     GradientDescent.cpp
     GradientDescent.hpp
 )
+
+add_subdirectory(test)
