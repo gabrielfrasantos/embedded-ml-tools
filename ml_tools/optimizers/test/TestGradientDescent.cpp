@@ -3,6 +3,8 @@
 
 namespace
 {
+    // Move the structs below to "losses/MeanSquaredError"
+
     template<typename T, std::size_t Examples, std::size_t Features>
     struct CostFunctionImpl
     {
@@ -70,18 +72,19 @@ namespace
     };
 }
 
-TEST(GradientDescentTest, test)
+TEST(GradientDescentTest, validate_gradient_descent)
 {
     constexpr std::size_t Examples = 4;
     constexpr std::size_t Features = 1;
     using GradientFunctionTest = GradientFunctionImpl<double, Examples, Features>;
     using CostFunctionTest = CostFunctionImpl<double, Examples, Features>;
 
-    Eigen::Matrix<double, Examples, Features> x({ 2.0, 
+    Eigen::Matrix<double, Examples, Features> x({    2.0, 
                                                      4.0,  
                                                      6.0,  
                                                      8.0});
-    Eigen::Matrix<double, Examples, 1>        y({ 4.5, 
+
+    Eigen::Matrix<double, Examples, 1>        y({    4.5, 
                                                      8.5, 
                                                     12.5, 
                                                     16.5});
@@ -96,5 +99,4 @@ TEST(GradientDescentTest, test)
     ml_tools::GradientDescent<double, GradientFunctionTest, CostFunctionTest, Features> gd(gradientFunctionTest, costFunctionTest, 1, 1, 0.001, 0);
 
     gd.Minimize(initialParameters, [](std::size_t epoch, double loss, ml_tools::ModelParameters<double, Features>& grandient){}, [](ml_tools::ModelParameters<double, Features>&){});
-
 }

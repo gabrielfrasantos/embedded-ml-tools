@@ -4,6 +4,7 @@ emil_add_test(ml_tools.optimizers_test)
 
 target_link_libraries(ml_tools.optimizers_test PUBLIC
     gmock_main
+    ml_tools.losses
     ml_tools.optimizers
 )
 
