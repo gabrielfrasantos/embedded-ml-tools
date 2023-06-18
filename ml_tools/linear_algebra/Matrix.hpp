@@ -3,8 +3,7 @@
 
 #include <array>
 #include <cstdint>
-#include "infra/util/BoundedVector.hpp"
-#include "infra/util/WithStorage.hpp"
+#include <memory>
 
 namespace ml_tools
 {
@@ -38,12 +37,8 @@ namespace ml_tools
         Matrix<T, Rows, Columns>& operator*=(T);
         Matrix<T, Rows, Columns>& operator/=(T);
 
-        void Multiply(const Matrix<T, Columns, Rows>& input, Matrix<T, Columns, Rows>& result);
-        void Transpose(Matrix<T, Columns, Rows>& result);
-        void Inverse(Matrix<T, Rows, Columns>& result);
-
-        static void CreateIdentity(Matrix<T, Rows, Columns>& result);
-        static T DotProduct(Matrix<T, Rows, Columns>& a, Matrix<T, Rows, Columns>& b);
+        Matrix<T, Columns, Rows>& Transpose();
+        Matrix<T, Rows, Columns>& Inverse();
 
     private:
         Dimension dimension{ Rows, Columns };
@@ -52,6 +47,15 @@ namespace ml_tools
         template <typename, std::size_t, std::size_t>
         friend class Matrix;
     };
+
+    template<typename T, std::size_t Rows, std::size_t Columns>
+    Matrix<T, Rows, Columns>& operator+(Matrix<T, Rows, Columns>& a, Matrix<T, Rows, Columns>& b);
+
+    template<typename T, std::size_t Rows, std::size_t Columns>
+    Matrix<T, Rows, Columns>& operator-(Matrix<T, Rows, Columns>& a, Matrix<T, Rows, Columns>& b);
+
+    template<typename T, std::size_t RowsA, std::size_t ColumnsA, std::size_t RowsB, std::size_t ColumnsB>
+    Matrix<T, RowsA, ColumnsB>& operator*(Matrix<T, RowsA, ColumnsA>& a, Matrix<T, RowsB, ColumnsB>& b);
 
     //// Implementation ////
 
@@ -86,7 +90,7 @@ namespace ml_tools
     template<typename T, std::size_t Rows, std::size_t Columns>
     bool Matrix<T, Rows, Columns>::operator==(const Matrix<T, Rows, Columns>& input)
     {
-        for(std::size_t i = 0; i < storage.size(); i++)
+        for (std::size_t i = 0; i < storage.size(); i++)
             if (this->storage.at(i) != input.storage.at(i))
                 return false;
 
@@ -102,7 +106,7 @@ namespace ml_tools
     template<typename T, std::size_t Rows, std::size_t Columns>
     Matrix<T, Rows, Columns>& Matrix<T, Rows, Columns>::operator+=(const Matrix<T, Rows, Columns>& input)
     {
-        for(std::size_t i = 0; i < storage.size(); i++)
+        for (std::size_t i = 0; i < storage.size(); i++)
             this->storage.at(i) += input.storage.at(i);
 
         return *this;
@@ -111,7 +115,7 @@ namespace ml_tools
     template<typename T, std::size_t Rows, std::size_t Columns>
     Matrix<T, Rows, Columns>& Matrix<T, Rows, Columns>::operator-=(const Matrix<T, Rows, Columns>& input)
     {
-        for(std::size_t i = 0; i < storage.size(); i++)
+        for (std::size_t i = 0; i < storage.size(); i++)
             this->storage.at(i) -= input.storage.at(i);
 
         return *this;
@@ -120,7 +124,7 @@ namespace ml_tools
     template<typename T, std::size_t Rows, std::size_t Columns>
     Matrix<T, Rows, Columns>& Matrix<T, Rows, Columns>::operator*=(T multiplier)
     {
-        for(std::size_t i = 0; i < storage.size(); i++)
+        for (std::size_t i = 0; i < storage.size(); i++)
             this->storage.at(i) *= multiplier;
 
         return *this;
@@ -129,30 +133,52 @@ namespace ml_tools
     template<typename T, std::size_t Rows, std::size_t Columns>
     Matrix<T, Rows, Columns>& Matrix<T, Rows, Columns>::operator/=(T divisor)
     {
-        for(std::size_t i = 0; i < storage.size(); i++)
+        for (std::size_t i = 0; i < storage.size(); i++)
             this->storage.at(i) /= divisor;
 
         return *this;
     }
 
     template<typename T, std::size_t Rows, std::size_t Columns>
-    void Matrix<T, Rows, Columns>::Multiply(const Matrix<T, Columns, Rows>& input, Matrix<T, Columns, Rows>& result)
+    Matrix<T, Columns, Rows>& Matrix<T, Rows, Columns>::Transpose()
     {
+        auto result = new Matrix<T, Columns, Rows>();
 
-    }
-
-    template<typename T, std::size_t Rows, std::size_t Columns>
-    void Matrix<T, Rows, Columns>::Transpose(Matrix<T, Columns, Rows>& result)
-    {
         for (std::size_t i = 0; i < this->dimension.rows; i++)
             for (std::size_t j = 0; j < this->dimension.columns; j++)
                 result.storage.at(j * this->dimension.rows + i) = this->storage.at(j + i * this->dimension.columns);
     }
 
     template<typename T, std::size_t Rows, std::size_t Columns>
-    void Matrix<T, Rows, Columns>::Inverse(Matrix<T, Rows, Columns>& result)
+    Matrix<T, Rows, Columns>& Matrix<T, Rows, Columns>::Inverse()
     {
+        auto result = new Matrix<T, Rows, Columns>();
 
+        return result;
+    }
+
+    template<typename T, std::size_t Rows, std::size_t Columns>
+    Matrix<T, Rows, Columns>& operator+(Matrix<T, Rows, Columns>& a, Matrix<T, Rows, Columns>& b)
+    {
+        auto result = new Matrix<T, Rows, Columns>();
+
+        return result;
+    }
+
+    template<typename T, std::size_t Rows, std::size_t Columns>
+    Matrix<T, Rows, Columns>& operator-(Matrix<T, Rows, Columns>& a, Matrix<T, Rows, Columns>& b)
+    {
+        auto result = new Matrix<T, Rows, Columns>();
+
+        return result;
+    }
+
+    template<typename T, std::size_t RowsA, std::size_t ColumnsA, std::size_t RowsB, std::size_t ColumnsB>
+    Matrix<T, RowsA, ColumnsB>& operator*(Matrix<T, RowsA, ColumnsA>& a, Matrix<T, RowsB, ColumnsB>& b)
+    {
+        auto result = new Matrix<T, RowsA, ColumnsB>();
+
+        return result;
     }
 }
 

@@ -8,6 +8,7 @@ target_include_directories(ml_tools.optimizers PUBLIC
 target_link_libraries(ml_tools.optimizers
     infra.util
     ml_tools.linear_algebra
+    Eigen3::Eigen
 )
 
 target_sources(ml_tools.optimizers PRIVATE

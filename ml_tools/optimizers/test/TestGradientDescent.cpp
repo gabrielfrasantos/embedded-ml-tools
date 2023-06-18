@@ -3,72 +3,70 @@
 
 namespace
 {
-    template<typename T, std::size_t NumberOfExamples, std::size_t NumberOfFeatures>
+    template<typename T, std::size_t Examples, std::size_t Features>
     struct CostFunctionImpl
     {
-        CostFunctionImpl(ml_tools::Matrix<double, Examples, Features>& _x, ml_tools::Matrix<double, Examples, Features>& _y)
-            : x(_x)
-            , y(_y)
+        CostFunctionImpl(Eigen::Matrix<double, Examples, Features>& x, Eigen::Matrix<double, Examples, Features>& y)
+            : input(x)
+            , output(y)
         {}
 
-        T operator()(ml_tools::ModelParametersRef<T, NumberOfFeatures> parameters, T regularization)
+        T operator()(ml_tools::ModelParameters<T, Features>& parameters, T regularization)
         {
-#if 0
-            T m = parameters.w.dimension.rows;
             T cost = 0;
-            T& w = parameters.w;
-            T& b = parameters.b;
 
-            for (std::size_t i = 0; i < m; i++)
+            auto& weights = parameters.weights;
+            auto& bias = parameters.bias;
+            auto examples = parameters.weights.rows();
+            
+            for (std::size_t i = 0; i < examples; i++)
             {
-                auto temp = ((w * x(i, 0) + b) - y(i, 0))
+                auto temp = (weights * input(i, Eigen::all) + bias) - output(i, Eigen::all);
                 cost += temp * temp;
             }
 
-            return cost / (2 * m);
-#else
-            return 0;
-#endif
+            return cost / (2 * examples);
         }
 
-        ml_tools::Matrix<double, Examples, Features>& x;
-        ml_tools::Matrix<double, Examples, Features>& y;
+        Eigen::Matrix<double, Examples, Features>& input;
+        Eigen::Matrix<double, Examples, 1>& output;
     };
 
-    template<typename T, std::size_t NumberOfExamples, std::size_t NumberOfFeatures>
+    template<typename T, std::size_t Examples, std::size_t Features>
     struct GradientFunctionImpl
     {
-        GradientFunctionImpl(ml_tools::Matrix<double, Examples, Features>& _x, ml_tools::Matrix<double, Examples, Features>& _y)
-            : x(_x)
-            , y(_y)
+        GradientFunctionImpl(Eigen::Matrix<double, Examples, Features>& x, Eigen::Matrix<double, Examples, 1>& y)
+            : input(x)
+            , output(y)
         {}
 
-        ml_tools::ModelParametersRef<T, NumberOfFeatures> operator()(ml_tools::ModelParametersRef<T, NumberOfFeatures> parameters, T regularization)
+        ml_tools::ModelParameters<T, Features>& operator()(ml_tools::ModelParameters<T, Features>& parameters, T regularization)
         {
-#if 0
-            T m = parameters.w.dimension.rows;
-            T cost = 0;
-            T& dj_dw = gradientCostFunction.w;
-            T& dj_db = gradientCostFunction.b;
 
-            dj_dw = 0;
-            dj_db = 0;
+            auto examples = parameters.weights.rows();
+            auto& dj_dw = gradientCostFunction.weights;
+            auto& dj_db = gradientCostFunction.bias;
+            auto& weights = parameters.weights;
+            auto& bias = parameters.bias;
 
-            for (std::size_t i = 0; i < m; i++)
+            dj_dw.setZero();
+            dj_db.setZero();
+
+            for (std::size_t i = 0; i < examples; i++)
             {
-                dj_dw += ((w * x(i, 0) + b) - y(i, 0)) * x(i, 0);
-                dj_db += ((w * x(i, 0) + b) - y(i, 0));
+                dj_dw += ((weights * input(i, Eigen::all) + bias) - output(i, Eigen::all)) * input(i, Eigen::all);
+                dj_db += ((weights * input(i, Eigen::all) + bias) - output(i, Eigen::all));
             }
 
-            dj_dw /= m;
-            dj_db /= m;
-#endif
+            dj_dw /= examples;
+            dj_db /= examples;
+
             return gradientCostFunction;
         }
 
-        ml_tools::ModelParameters<T, NumberOfFeatures> gradientCostFunction;
-        ml_tools::Matrix<double, Examples, Features>& x;
-        ml_tools::Matrix<double, Examples, Features>& y;
+        ml_tools::ModelParameters<T, Features> gradientCostFunction;
+        Eigen::Matrix<double, Examples, Features>& input;
+        Eigen::Matrix<double, Examples, 1>& output;
     };
 }
 
@@ -79,12 +77,24 @@ TEST(GradientDescentTest, test)
     using GradientFunctionTest = GradientFunctionImpl<double, Examples, Features>;
     using CostFunctionTest = CostFunctionImpl<double, Examples, Features>;
 
-    ml_tools::Matrix<double, Examples, Features> x({2.0, 4.0,  6.0,  8.0});
-    ml_tools::Matrix<double, Examples, 1>        y({4.5, 8.5, 12.5, 16.5});
+    Eigen::Matrix<double, Examples, Features> x({ 2.0, 
+                                                     4.0,  
+                                                     6.0,  
+                                                     8.0});
+    Eigen::Matrix<double, Examples, 1>        y({ 4.5, 
+                                                     8.5, 
+                                                    12.5, 
+                                                    16.5});
 
     GradientFunctionTest gradientFunctionTest(x, y);
     CostFunctionTest costFunctionTest(x, y);
+    ml_tools::ModelParameters<double, Features> initialParameters;
+
+    initialParameters.weights << 2;
+    initialParameters.bias << 0.5;
 
     ml_tools::GradientDescent<double, GradientFunctionTest, CostFunctionTest, Features> gd(gradientFunctionTest, costFunctionTest, 1, 1, 0.001, 0);
+
+    gd.Minimize(initialParameters, [](std::size_t epoch, double loss, ml_tools::ModelParameters<double, Features>& grandient){}, [](ml_tools::ModelParameters<double, Features>&){});
 
 }
