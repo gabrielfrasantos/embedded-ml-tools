@@ -14,6 +14,11 @@ namespace ml_tools
         Eigen::Matrix<T, NumberOfFeatures, 1> weights;
         Eigen::Matrix<T, 1, 1> bias;
 
+        bool IsApprox(const ModelParameters<T, NumberOfFeatures>& rhs)
+        {
+            return rhs.bias.isApprox(this->bias, 1e-4) && rhs.weights.isApprox(this->weights, 1e-4);
+        }
+
         ModelParameters<T, NumberOfFeatures>& operator-=(const ModelParameters<T, NumberOfFeatures>& x)
         {
             this->weights -= x.weights;

@@ -24,7 +24,7 @@ namespace ml_tools
 
                 auto& weights = parameters.weights;
                 auto& bias = parameters.bias;
-                auto examples = parameters.weights.rows();
+                auto examples = input.rows();
                 
                 for (std::size_t i = 0; i < examples; i++)
                 {
@@ -50,7 +50,7 @@ namespace ml_tools
             ml_tools::ModelParameters<T, Features>& operator()(ml_tools::ModelParameters<T, Features>& parameters, T regularization)
             {
 
-                auto examples = parameters.weights.rows();
+                auto examples = input.rows();
                 auto& dj_dw = gradientCostFunction.weights;
                 auto& dj_db = gradientCostFunction.bias;
                 auto& weights = parameters.weights;
