@@ -29,10 +29,18 @@ namespace ml_tools
 
         ModelParameters<T, NumberOfFeatures>& operator*(T scalar)
         {
-            this->weights * scalar;
-            this->bias * scalar;
+            this->weights *= scalar;
+            this->bias *= scalar;
 
             return *this;
+        }
+
+        friend std::ostream& operator<<(std::ostream& ostream, const ModelParameters<T, NumberOfFeatures>& rhs) 
+        {
+            ostream << "Matrix weights: " << rhs.weights << std::endl;
+            ostream << "Matrix bias: " << rhs.bias << std::endl;
+
+            return ostream;
         }
     };
 }

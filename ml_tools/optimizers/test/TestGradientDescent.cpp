@@ -27,21 +27,23 @@ TEST(GradientDescentTest, validate_gradient_descent)
 
     GradientFunctionTest gradientFunctionTest(x, y);
     CostFunctionTest costFunctionTest(x, y);
+
+    ml_tools::ModelParameters<double, Features> resultExpected;
     ml_tools::ModelParameters<double, Features> initialParameters;
 
-    initialParameters.weights << -0.6;
-    initialParameters.bias << 4.5;
+    resultExpected.weights << -0.549633;
+    resultExpected.bias << 4.71667;
 
-    ml_tools::GradientDescent<double, GradientFunctionTest, CostFunctionTest, Features> gd(gradientFunctionTest, costFunctionTest, 25, 5, 0.01, 0);
+    initialParameters.weights << 0;
+    initialParameters.bias << 0;
 
-    auto onEpoch = [](std::size_t epoch, double loss, ml_tools::ModelParameters<double, Features>& grandient)
+    ml_tools::GradientDescent<double, GradientFunctionTest, CostFunctionTest, Features> gd(gradientFunctionTest, costFunctionTest, 1500, 150, 0.05, 0);
+
+    auto onEpoch = [](std::size_t, double, ml_tools::ModelParameters<double, Features>&) { };
+
+    auto onDone = [&resultExpected](ml_tools::ModelParameters<double, Features>& result)
     {
-        std::cerr << "epoch: " << epoch << ", loss: " << loss << std::endl;
-    };
-
-    auto onDone = [](ml_tools::ModelParameters<double, Features>&)
-    {
-
+        EXPECT_TRUE(result.IsApprox(resultExpected));
     };
 
     gd.Minimize(initialParameters, onEpoch, onDone);
