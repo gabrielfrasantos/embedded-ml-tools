@@ -1,15 +1,33 @@
-#ifndef MLTOOLS_LOSSES_MEAN_SQUARED_ERROR_HPP
-#define MLTOOLS_LOSSES_MEAN_SQUARED_ERROR_HPP
+#ifndef MLTOOLS_LOSSES_CROSS_ENTROPY_HPP
+#define MLTOOLS_LOSSES_CROSS_ENTROPY_HPP
 
 #include <Eigen/Geometry>
 #include <functional>
 #include <cmath>
-#include "models/Model.hpp"
+#include "activations/Sigmoid.hpp"
 
 namespace ml_tools
 {
     namespace MeanSquaredError
     {
+        namespace
+        {
+            template<typename T, std::size_t Examples, std::size_t Features>
+            T AccumulativeSumProductBetweenWeightsAndInput(std::size_t example, ModelParameters<T, Features> parameters, Eigen::Matrix<T, Examples, Features>& input)
+            {
+                auto& weights = parameters.weights;
+                auto& bias = parameters.bias;
+                auto features = input.cols();
+
+                T z = 0;
+
+                for (std::size_t j = 0; j < features; j++)
+                    z += weights(example, 0) * input(example, j);
+
+                return z + bias(0, 0);
+            }
+        }
+
         template<typename T, std::size_t Examples, std::size_t Features>
         struct CostFunction
         {
@@ -22,17 +40,16 @@ namespace ml_tools
             {
                 T cost = 0;
 
-                auto& weights = parameters.weights;
-                auto& bias = parameters.bias;
                 auto examples = input.rows();
                 
                 for (std::size_t i = 0; i < examples; i++)
                 {
-                    auto temp = (weights * input(i, Eigen::all) + bias) - output(i, Eigen::all);
-                    cost += temp * temp;
+                    auto z = AccumulativeSumProductBetweenWeightsAndInput(i, parameters, input);
+
+                    cost += -y(i, 0) * std::log(Sigmoid::f(z)) - (1 - y(i, 0)) * std::log(1 - Sigmoid::f(z));
                 }
 
-                return cost / (2 * examples);
+                return cost / examples;
             }
 
             Eigen::Matrix<T, Examples, Features>& input;
@@ -49,7 +66,7 @@ namespace ml_tools
 
             ml_tools::ModelParameters<T, Features>& operator()(ml_tools::ModelParameters<T, Features>& parameters, T regularization)
             {
-                auto examples = input.rows();
+                /*auto examples = input.rows();
                 auto& dj_dw = gradientCostFunction.weights;
                 auto& dj_db = gradientCostFunction.bias;
                 auto& weights = parameters.weights;
@@ -67,7 +84,25 @@ namespace ml_tools
                 dj_dw /= examples;
                 dj_db /= examples;
 
-                return gradientCostFunction;
+                return gradientCostFunction;*/
+
+                auto examples = input.rows();
+                auto& dj_dw = gradientCostFunction.weights;
+                auto& dj_db = gradientCostFunction.bias;
+
+                dj_dw.setZero();
+                dj_db.setZero();
+                
+                for (std::size_t i = 0; i < examples; i++)
+                {
+                    auto f_wb = Sigmoid::f(AccumulativeSumProductBetweenWeightsAndInput(i, parameters, input));
+
+                    cost += -y(i, 0) * std::log(Sigmoid::f(z)) - (1 - y(i, 0)) * std::log(1 - Sigmoid::f(z));
+                }
+
+                return cost / examples;
+
+
             }
 
             ml_tools::ModelParameters<T, Features> gradientCostFunction;

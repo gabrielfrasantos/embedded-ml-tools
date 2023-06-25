@@ -9,12 +9,13 @@ target_link_libraries(ml_tools.losses
     infra.util
     ml_tools.linear_algebra
     ml_tools.models
+    ml_tools.activations
     Eigen3::Eigen
 )
 
 target_sources(ml_tools.losses PRIVATE
-    BinaryCrossEntropy.cpp
-    BinaryCrossEntropy.hpp
+    CrossEntropy.cpp
+    CrossEntropy.hpp
     MeanSquaredError.cpp
     MeanSquaredError.hpp
 )
