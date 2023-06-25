@@ -8,11 +8,14 @@ target_include_directories(ml_tools.activations PUBLIC
 target_link_libraries(ml_tools.activations
     infra.util
     ml_tools.linear_algebra
+    ml_tools.models
 )
 
 target_sources(ml_tools.activations PRIVATE
     Relu.hpp
     Relu.cpp
+    Sigmoid.hpp
+    Sigmoid.cpp
     SoftMax.hpp
     SoftMax.cpp
 )
