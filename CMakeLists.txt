@@ -5,22 +5,29 @@ project(embedded-ml-tools VERSION 1.0.0)
 include(FetchContent)
 
 FetchContent_Declare(
-    emil
-    GIT_REPOSITORY  https://github.com/gabrielfrasantos/embedded-infra-lib.git
-    GIT_TAG         main
+  emil
+  GIT_REPOSITORY    https://github.com/gabrielfrasantos/embedded-infra-lib.git
+  GIT_TAG           main
 )
 
 FetchContent_Declare(
-  Eigen
+  eigen
   GIT_REPOSITORY    https://gitlab.com/libeigen/eigen.git
   GIT_TAG           3.4.0
   GIT_SHALLOW       TRUE)
 
-set(EIGEN_BUILD_DOC OFF)
-set(BUILD_TESTING OFF)
-set(EIGEN_BUILD_PKGCONFIG OFF)
+FetchContent_Declare(
+  matplotplusplus
+  GIT_REPOSITORY    https://github.com/alandefreitas/matplotplusplus.git
+  GIT_TAG           v1.2.0)
 
-FetchContent_MakeAvailable(emil Eigen)
+set(EIGEN_BUILD_DOC           OFF)
+set(EIGEN_BUILD_PKGCONFIG     OFF)
+set(BUILD_TESTING             OFF)
+set(MATPLOTPP_BUILD_EXAMPLES  OFF)
+set(MATPLOTPP_BUILD_TESTS     OFF)
+
+FetchContent_MakeAvailable(emil eigen matplotplusplus)
 
 add_subdirectory(ml_tools)
 
